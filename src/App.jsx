@@ -288,7 +288,7 @@ const LandingIntro = ({ onStart, onComplete, onEnter }) => {
               className="font-serif text-[1.4rem] whitespace-nowrap sm:text-3xl sm:whitespace-normal md:text-6xl lg:text-7xl text-white font-bold tracking-normal md:tracking-[0.1em] text-center absolute flex justify-center flex-nowrap sm:flex-wrap w-full px-4 drop-shadow-[0_0_20px_rgba(212,175,55,0.3)]"
               style={{ top: '40%' }}
             >
-              {"1492: la otra histor".split("").map((char, index) => (
+              {"1492: La otra histor".split("").map((char, index) => (
                 <motion.span 
                   key={index}
                   initial={{ opacity: 0, filter: "blur(10px)", scale: 1.2 }}
@@ -302,13 +302,13 @@ const LandingIntro = ({ onStart, onComplete, onEnter }) => {
               <motion.span 
                  initial={{ opacity: 0, filter: "blur(20px)", scale: 2 }}
                  animate={{ opacity: 1, filter: "blur(0px)", scale: 1 }}
-                 transition={{ duration: 2, ease: "easeOut", delay: "1492: la otra histor".length * 0.03 }}
+                 transition={{ duration: 2, ease: "easeOut", delay: "1492: La otra histor".length * 0.03 }}
                  className="inline-block text-accent drop-shadow-[0_0_40px_rgba(212,175,55,1)]"
               >I</motion.span>
               <motion.span 
                  initial={{ opacity: 0, filter: "blur(20px)", scale: 2 }}
                  animate={{ opacity: 1, filter: "blur(0px)", scale: 1 }}
-                 transition={{ duration: 2, ease: "easeOut", delay: "1492: la otra histor".length * 0.03 + 0.1 }}
+                 transition={{ duration: 2, ease: "easeOut", delay: "1492: La otra histor".length * 0.03 + 0.1 }}
                  className="inline-block text-accent drop-shadow-[0_0_40px_rgba(212,175,55,1)]"
               >A</motion.span>
             </motion.div>
@@ -324,7 +324,7 @@ const LandingIntro = ({ onStart, onComplete, onEnter }) => {
               className="text-2xl md:text-4xl lg:text-5xl text-accent/90 text-center absolute px-4 w-full drop-shadow-2xl"
               style={{ top: '56%', fontFamily: "'MedievalSharp', cursive" }}
             >
-              el descubrimiento de Europa
+              El descubrimiento de Europa
             </motion.h2>
           )}
         </AnimatePresence>
