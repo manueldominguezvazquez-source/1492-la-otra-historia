@@ -829,7 +829,7 @@ const Section = React.memo(({ section, index, activeSectionId, onSectionEnter, a
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false, amount: 0.3 }}
           transition={{ delay: baseDelay - 0.2, duration: 0.8, ease: "easeOut" }}
-          className={`relative z-20 pointer-events-auto w-[85%] md:w-[60%] lg:w-[35%] max-w-lg mb-12 md:mb-6 lg:mb-0 rounded-2xl overflow-hidden p-[1px] group shadow-[0_15px_50px_rgba(0,0,0,0.9)] ${isSection5 ? 'animate-vibrate-glass' : ''} ${isSection6 ? 'animate-levitate' : ''}`}
+          className="relative z-20 pointer-events-auto w-[85%] md:w-[60%] lg:w-[35%] max-w-lg mb-12 md:mb-6 lg:mb-0 rounded-2xl overflow-hidden p-[1px] group shadow-[0_15px_50px_rgba(0,0,0,0.9)]"
         >
           {/* Animated Subtle Golden/Torch Border (Glassmorphism highlight) with Pulse */}
           <motion.div 
