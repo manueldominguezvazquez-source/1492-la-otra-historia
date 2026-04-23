@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
-import { Play, Pause, Volume2, VolumeX, X, Eye, EyeOff, ChevronDown, AlignLeft, Hand } from 'lucide-react';
+import { Play, Pause, Volume2, VolumeX, X, Eye, EyeOff, ChevronDown, ChevronsDown, AlignLeft, Hand } from 'lucide-react';
 
 const sectionsData = [
   {
@@ -334,10 +334,12 @@ const LandingIntro = ({ onStart, onComplete, onEnter }) => {
             <motion.div
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="absolute bottom-12 flex flex-col items-center gap-3 text-accent/80 animate-bounce"
+              className="absolute bottom-8 md:bottom-12 flex flex-col items-center gap-2 text-accent/80 animate-bounce pointer-events-none"
             >
-              <span className="font-sans text-xs tracking-[0.2em] uppercase font-light">Descubrir</span>
-              <ChevronDown size={28} className="opacity-70" />
+              <span className="font-sans text-[10px] md:text-xs tracking-[0.2em] uppercase font-bold bg-black/40 px-4 py-1.5 rounded-full backdrop-blur-md border border-accent/20">
+                Desliza hacia arriba
+              </span>
+              <ChevronsDown size={28} className="opacity-70 mt-1" />
             </motion.div>
           )}
         </AnimatePresence>
