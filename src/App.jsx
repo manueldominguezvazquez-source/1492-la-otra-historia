@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
-import { Play, Pause, Volume2, VolumeX, X, Eye, EyeOff, ChevronDown, ChevronsDown, AlignLeft, Hand } from 'lucide-react';
+import { Play, Pause, Volume2, VolumeX, X, Eye, EyeOff, ChevronDown, ChevronsDown, ChevronLeft, ChevronRight, AlignLeft, Hand } from 'lucide-react';
 
 const sectionsData = [
   {
@@ -648,6 +648,22 @@ const Section = React.memo(({ section, index, activeSectionId, onSectionEnter, a
   const [activeHotspot, setActiveHotspot] = useState(null);
   const videoRef = useRef(null);
   const constraintsRef = useRef(null);
+  const scrollContainerRef = useRef(null);
+
+  useEffect(() => {
+    if (scrollContainerRef.current && typeof window !== 'undefined' && window.innerWidth < 768) {
+      // Centrar el vídeo panorámico nativamente
+      const scrollMax = scrollContainerRef.current.scrollWidth - scrollContainerRef.current.clientWidth;
+      scrollContainerRef.current.scrollLeft = scrollMax / 2;
+    }
+  }, []);
+
+  const handleScrollMap = (direction) => {
+    if (scrollContainerRef.current) {
+      const amount = direction === 'left' ? -150 : 150;
+      scrollContainerRef.current.scrollBy({ left: amount, behavior: 'smooth' });
+    }
+  };
 
   useEffect(() => {
     if (videoRef.current) {
@@ -676,23 +692,23 @@ const Section = React.memo(({ section, index, activeSectionId, onSectionEnter, a
       onViewportEnter={() => onSectionEnter(section.id)}
       className={`relative w-full h-screen scroll-snap-start overflow-hidden`}
     >
-      {/* Capa de Vídeo y Hotspots Arrastrable en Móvil */}
-      <motion.div
-        drag={typeof window !== 'undefined' && window.innerWidth < 768 ? "x" : false}
-        dragConstraints={constraintsRef}
-        initial={typeof window !== 'undefined' && window.innerWidth < 768 ? { x: -(window.innerHeight * (16/9) - window.innerWidth) / 2 } : { x: 0 }}
-        className="absolute top-0 bottom-0 h-full aspect-video max-w-none md:w-full md:aspect-auto z-0 cursor-grab active:cursor-grabbing pointer-events-auto"
+      {/* Capa de Vídeo y Hotspots Arrastrable Nativamente en Móvil */}
+      <div
+        ref={scrollContainerRef}
+        className="absolute inset-0 z-0 overflow-x-auto overflow-y-hidden no-scrollbar pointer-events-auto snap-x snap-mandatory"
+        style={{ scrollBehavior: 'smooth' }}
       >
-        <video
-          ref={videoRef}
-          src={section.videoUrl}
-          autoPlay
-          preload="metadata"
-          loop
-          muted
-          playsInline
-          className="w-full h-full object-cover pointer-events-none"
-        />
+        <div className="h-full aspect-video max-w-none md:w-full md:aspect-auto relative snap-center">
+          <video
+            ref={videoRef}
+            src={section.videoUrl}
+            autoPlay
+            preload="metadata"
+            loop
+            muted
+            playsInline
+            className="w-full h-full object-cover pointer-events-none"
+          />
 
         {/* Hotspots integrados en la capa móvil para que acompañen al arrastre */}
         {section.hotspots && section.hotspots.length > 0 && (
@@ -716,15 +732,33 @@ const Section = React.memo(({ section, index, activeSectionId, onSectionEnter, a
             ))}
           </div>
         )}
-      </motion.div>
+          </div>
+        )}
+      </div>
       
-      <div className={`absolute inset-0 flex flex-col items-center ${verticalAlignment} ${horizontalAlignment} transition-all duration-700 ease-in-out ${isUiVisible ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
+      <div className={`absolute inset-0 flex flex-col items-center ${verticalAlignment} ${horizontalAlignment} transition-all duration-700 ease-in-out pointer-events-none ${isUiVisible ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}>
         
-        {/* Indicador de Deslizar (Swipe) solo en móvil cuando hay hotspots */}
+        {/* Controles del mapa (Swipe y Flechas) solo en móvil cuando hay hotspots */}
         {section.hotspots && section.hotspots.length > 0 && (
-          <div className="absolute top-24 md:hidden flex flex-col items-center gap-2 text-white/60 animate-bounce pointer-events-none z-20">
-            <Hand width={28} height={28} className="drop-shadow-lg" />
-            <span className="text-[10px] uppercase tracking-[0.2em] font-sans font-bold bg-black/30 px-3 py-1 rounded-full backdrop-blur-sm">Desliza el mapa</span>
+          <div className="absolute top-24 md:hidden flex items-center justify-center gap-6 text-white/60 pointer-events-auto z-20 w-full px-4">
+            <button 
+              onClick={(e) => { e.stopPropagation(); handleScrollMap('left'); }}
+              className="bg-black/40 p-2.5 rounded-full backdrop-blur-md border border-white/20 hover:bg-black/60 transition-colors shadow-lg active:scale-95"
+            >
+              <ChevronLeft size={24} className="text-white" />
+            </button>
+
+            <div className="flex flex-col items-center gap-1 animate-pulse pointer-events-none">
+              <Hand width={20} height={20} className="drop-shadow-lg opacity-80 text-white" />
+              <span className="text-[9px] uppercase tracking-[0.2em] font-sans font-bold bg-black/40 px-3 py-1 rounded-full backdrop-blur-sm border border-white/10 text-white/90">Explorar</span>
+            </div>
+
+            <button 
+              onClick={(e) => { e.stopPropagation(); handleScrollMap('right'); }}
+              className="bg-black/40 p-2.5 rounded-full backdrop-blur-md border border-white/20 hover:bg-black/60 transition-colors shadow-lg active:scale-95"
+            >
+              <ChevronRight size={24} className="text-white" />
+            </button>
           </div>
         )}
 
@@ -790,7 +824,7 @@ const Section = React.memo(({ section, index, activeSectionId, onSectionEnter, a
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false, amount: 0.3 }}
           transition={{ delay: baseDelay - 0.2, duration: 0.8, ease: "easeOut" }}
-          className={`relative z-20 w-[85%] md:w-[60%] lg:w-[35%] max-w-lg mb-6 lg:mb-0 rounded-2xl overflow-hidden p-[1px] group shadow-[0_15px_50px_rgba(0,0,0,0.9)] ${isSection5 ? 'animate-vibrate-glass' : ''} ${isSection6 ? 'animate-levitate' : ''}`}
+          className={`relative z-20 pointer-events-auto w-[85%] md:w-[60%] lg:w-[35%] max-w-lg mb-6 lg:mb-0 rounded-2xl overflow-hidden p-[1px] group shadow-[0_15px_50px_rgba(0,0,0,0.9)] ${isSection5 ? 'animate-vibrate-glass' : ''} ${isSection6 ? 'animate-levitate' : ''}`}
         >
           {/* Animated Subtle Golden/Torch Border (Glassmorphism highlight) with Pulse */}
           <motion.div 
