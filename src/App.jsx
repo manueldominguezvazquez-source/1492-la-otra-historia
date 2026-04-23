@@ -242,7 +242,7 @@ const LandingIntro = ({ onStart, onComplete, onEnter }) => {
     <motion.section 
       onViewportEnter={onEnter}
       viewport={{ amount: 0.5 }}
-      className="relative w-full h-screen scroll-snap-start flex flex-col items-center justify-center overflow-hidden bg-[#050B14]"
+      className="relative w-full h-[100dvh] scroll-snap-start flex flex-col items-center justify-center overflow-hidden bg-[#050B14]"
     >
       <div className="absolute top-8 left-0 w-full text-center px-4 z-50 pointer-events-none">
         <p className="text-white/40 text-xs md:text-sm tracking-widest font-sans uppercase">
@@ -384,7 +384,7 @@ const OutroSection = ({ onEnter }) => {
     <motion.section 
       onViewportEnter={onEnter}
       viewport={{ amount: 0.5, margin: "0px 0px 0px 0px" }}
-      className="relative w-full h-screen scroll-snap-start flex items-center justify-center bg-[#050505] z-0 overflow-hidden"
+      className="relative w-full h-[100dvh] scroll-snap-start flex items-center justify-center bg-[#050505] z-0 overflow-hidden"
     >
       {/* Eclipse Dorado */}
       <motion.div 
@@ -610,7 +610,7 @@ export default function App() {
         <audio ref={bgMusicRef} src="/music.mov" loop preload="auto" />
         <audio ref={audioRef} preload="auto" />
 
-        <main className={`w-full h-screen scroll-snap-y-mandatory text-white relative ${appStage === 'LANDING' ? 'overflow-hidden' : 'overflow-y-scroll'}`}>
+        <main className={`w-full h-[100dvh] scroll-snap-y-mandatory text-white relative ${appStage === 'LANDING' ? 'overflow-hidden' : 'overflow-y-scroll'}`}>
           <LandingIntro 
             onStart={(aud) => setIsAudioEnabled(aud)} 
             onComplete={() => setAppStage('EXPERIENCE')} 
@@ -690,7 +690,7 @@ const Section = React.memo(({ section, index, activeSectionId, onSectionEnter, a
       ref={constraintsRef}
       viewport={{ amount: 0.5 }}
       onViewportEnter={() => onSectionEnter(section.id)}
-      className={`relative w-full h-screen scroll-snap-start overflow-hidden`}
+      className={`relative w-full h-[100dvh] scroll-snap-start overflow-hidden`}
     >
       {/* Capa de Vídeo y Hotspots Arrastrable Nativamente en Móvil */}
       <div
@@ -824,7 +824,7 @@ const Section = React.memo(({ section, index, activeSectionId, onSectionEnter, a
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false, amount: 0.3 }}
           transition={{ delay: baseDelay - 0.2, duration: 0.8, ease: "easeOut" }}
-          className={`relative z-20 pointer-events-auto w-[85%] md:w-[60%] lg:w-[35%] max-w-lg mb-6 lg:mb-0 rounded-2xl overflow-hidden p-[1px] group shadow-[0_15px_50px_rgba(0,0,0,0.9)] ${isSection5 ? 'animate-vibrate-glass' : ''} ${isSection6 ? 'animate-levitate' : ''}`}
+          className={`relative z-20 pointer-events-auto w-[85%] md:w-[60%] lg:w-[35%] max-w-lg mb-12 md:mb-6 lg:mb-0 rounded-2xl overflow-hidden p-[1px] group shadow-[0_15px_50px_rgba(0,0,0,0.9)] ${isSection5 ? 'animate-vibrate-glass' : ''} ${isSection6 ? 'animate-levitate' : ''}`}
         >
           {/* Animated Subtle Golden/Torch Border (Glassmorphism highlight) with Pulse */}
           <motion.div 
@@ -892,7 +892,7 @@ const Section = React.memo(({ section, index, activeSectionId, onSectionEnter, a
                 hidden: { opacity: 0 },
                 visible: { opacity: 1, transition: { staggerChildren: 0.008, delayChildren: textDelay } } 
               }}
-              className={`font-sans text-xs md:text-sm lg:text-base leading-snug md:leading-relaxed drop-shadow-md font-light ${isSection6 ? 'text-white/80 animate-pulse-cyan' : 'text-white/95'}`}
+              className={`font-sans text-xs md:text-sm lg:text-base leading-snug md:leading-relaxed drop-shadow-md font-light max-h-[35dvh] md:max-h-none overflow-y-auto no-scrollbar ${isSection6 ? 'text-white/80 animate-pulse-cyan' : 'text-white/95'}`}
             >
               {section.text.split(" ").map((word, wIdx) => (
                 <span key={`tw-${wIdx}`} className="inline-block mr-[0.3em] mb-[0.2em]">
