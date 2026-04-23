@@ -745,7 +745,7 @@ const Section = React.memo(({ section, index, activeSectionId, onSectionEnter, a
         
         {/* Controles del mapa (Swipe y Flechas) solo en móvil cuando hay hotspots */}
         {section.hotspots && section.hotspots.length > 0 && (
-          <div className={`absolute top-24 md:hidden flex items-center justify-center gap-4 text-white/60 z-20 w-full px-4 transition-opacity duration-700 ${isUiVisible ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+          <div className={`absolute top-6 left-4 md:hidden flex items-start gap-4 text-white/60 z-20 transition-opacity duration-700 ${isUiVisible ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
             <button 
               onClick={(e) => { e.stopPropagation(); handleScrollMap('left'); }}
               className="bg-black/40 p-1.5 rounded-full backdrop-blur-md border border-white/20 hover:bg-black/60 transition-colors shadow-lg active:scale-95"
