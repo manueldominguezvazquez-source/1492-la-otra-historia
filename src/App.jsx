@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
-import { Play, Pause, Volume2, VolumeX, X, Eye, EyeOff, ChevronDown, AlignLeft } from 'lucide-react';
+import { Play, Pause, Volume2, VolumeX, X, Eye, EyeOff, ChevronDown, AlignLeft, Hand } from 'lucide-react';
 
 const sectionsData = [
   {
@@ -285,7 +285,7 @@ const LandingIntro = ({ onStart, onComplete, onEnter }) => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 2 }}
-              className="font-serif text-4xl md:text-6xl lg:text-7xl text-white font-bold tracking-[0.1em] text-center absolute flex justify-center flex-wrap w-full px-4 drop-shadow-[0_0_20px_rgba(212,175,55,0.3)]"
+              className="font-serif text-[1.4rem] whitespace-nowrap sm:text-3xl sm:whitespace-normal md:text-6xl lg:text-7xl text-white font-bold tracking-normal md:tracking-[0.1em] text-center absolute flex justify-center flex-nowrap sm:flex-wrap w-full px-4 drop-shadow-[0_0_20px_rgba(212,175,55,0.3)]"
               style={{ top: '40%' }}
             >
               {"1492: la otra histor".split("").map((char, index) => (
@@ -645,6 +645,7 @@ const Section = React.memo(({ section, index, activeSectionId, onSectionEnter, a
   const isActiveSegment = activeSectionId === section.id;
   const [activeHotspot, setActiveHotspot] = useState(null);
   const videoRef = useRef(null);
+  const constraintsRef = useRef(null);
 
   useEffect(() => {
     if (videoRef.current) {
@@ -668,23 +669,30 @@ const Section = React.memo(({ section, index, activeSectionId, onSectionEnter, a
 
   return (
     <motion.section 
+      ref={constraintsRef}
       viewport={{ amount: 0.5 }}
       onViewportEnter={() => onSectionEnter(section.id)}
       className={`relative w-full h-screen scroll-snap-start overflow-hidden`}
     >
-      <video
-        ref={videoRef}
-        src={section.videoUrl}
-        autoPlay
-        preload="metadata"
-        loop
-        muted
-        playsInline
-        className="absolute inset-0 w-full h-full object-cover z-0 pointer-events-none"
-      />
-      {/* Se ha eliminado la capa de oscurecimiento global para que el vídeo brille al 100% de su iluminación original */}
-      
-      <div className={`absolute inset-0 flex flex-col items-center ${verticalAlignment} ${horizontalAlignment} transition-all duration-700 ease-in-out ${isUiVisible ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
+      {/* Capa de Vídeo y Hotspots Arrastrable en Móvil */}
+      <motion.div
+        drag={typeof window !== 'undefined' && window.innerWidth < 768 ? "x" : false}
+        dragConstraints={constraintsRef}
+        initial={typeof window !== 'undefined' && window.innerWidth < 768 ? { x: -(window.innerHeight * (16/9) - window.innerWidth) / 2 } : { x: 0 }}
+        className="absolute top-0 bottom-0 h-full aspect-video max-w-none md:w-full md:aspect-auto z-0 cursor-grab active:cursor-grabbing pointer-events-auto"
+      >
+        <video
+          ref={videoRef}
+          src={section.videoUrl}
+          autoPlay
+          preload="metadata"
+          loop
+          muted
+          playsInline
+          className="w-full h-full object-cover pointer-events-none"
+        />
+
+        {/* Hotspots integrados en la capa móvil para que acompañen al arrastre */}
         {section.hotspots && section.hotspots.length > 0 && (
           <div className="absolute inset-0 z-30 pointer-events-none">
             {section.hotspots.map((spot) => (
@@ -702,30 +710,46 @@ const Section = React.memo(({ section, index, activeSectionId, onSectionEnter, a
                     <span className="relative inline-flex rounded-full h-3 w-3 bg-[#00E5FF] shadow-[0_0_15px_#00E5FF] group-hover:scale-150 transition-transform"></span>
                   </div>
                 </div>
-
-                <AnimatePresence>
-                  {activeHotspot === spot.id && (
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.9, y: 10 }}
-                      animate={{ opacity: 1, scale: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.9, y: 10 }}
-                      className="fixed top-20 left-4 right-4 w-auto md:absolute md:top-8 md:bottom-auto md:left-8 md:right-auto md:w-80 lg:w-96 p-5 rounded-2xl backdrop-blur-sm bg-[#03060A]/20 border border-accent/40 shadow-2xl z-50 text-white"
-                    >
-                      <button 
-                        onClick={(e) => { e.stopPropagation(); setActiveHotspot(null); }}
-                        className="absolute top-3 right-3 text-white/50 hover:text-accent transition-colors"
-                      >
-                        <X size={16} />
-                      </button>
-                      <h4 className="font-serif font-bold text-accent mb-3 pb-2 border-b border-accent/30 text-lg md:text-xl leading-tight pr-6">{spot.title}</h4>
-                      <p className="font-sans text-sm md:text-base text-white/90 leading-relaxed">{spot.desc}</p>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
               </div>
             ))}
           </div>
         )}
+      </motion.div>
+      
+      <div className={`absolute inset-0 flex flex-col items-center ${verticalAlignment} ${horizontalAlignment} transition-all duration-700 ease-in-out ${isUiVisible ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
+        
+        {/* Indicador de Deslizar (Swipe) solo en móvil cuando hay hotspots */}
+        {section.hotspots && section.hotspots.length > 0 && (
+          <div className="absolute top-24 md:hidden flex flex-col items-center gap-2 text-white/60 animate-bounce pointer-events-none z-20">
+            <Hand width={28} height={28} className="drop-shadow-lg" />
+            <span className="text-[10px] uppercase tracking-[0.2em] font-sans font-bold bg-black/30 px-3 py-1 rounded-full backdrop-blur-sm">Desliza el mapa</span>
+          </div>
+        )}
+
+        <AnimatePresence>
+          {activeHotspot && section.hotspots.find(s => s.id === activeHotspot) && (
+            <motion.div
+              key="popup"
+              initial={{ opacity: 0, scale: 0.9, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 10 }}
+              className="fixed top-20 left-4 right-4 w-auto md:absolute md:top-8 md:bottom-auto md:left-8 md:right-auto md:w-80 lg:w-96 p-5 rounded-2xl backdrop-blur-sm bg-[#03060A]/20 border border-accent/40 shadow-2xl z-50 text-white pointer-events-auto"
+            >
+              <button 
+                onClick={(e) => { e.stopPropagation(); setActiveHotspot(null); }}
+                className="absolute top-3 right-3 text-white/50 hover:text-accent transition-colors"
+              >
+                <X size={16} />
+              </button>
+              <h4 className="font-serif font-bold text-accent mb-3 pb-2 border-b border-accent/30 text-lg md:text-xl leading-tight pr-6">
+                {section.hotspots.find(s => s.id === activeHotspot).title}
+              </h4>
+              <p className="font-sans text-sm md:text-base text-white/90 leading-relaxed">
+                {section.hotspots.find(s => s.id === activeHotspot).desc}
+              </p>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <style>{`
           @keyframes vibrateGlass {
