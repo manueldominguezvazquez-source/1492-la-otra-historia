@@ -558,35 +558,40 @@ export default function App() {
             initial={{ opacity: 0, y: -20 }} 
             animate={{ opacity: 1, y: 0 }} 
             transition={{ duration: 1, delay: 0.5 }}
-            className="fixed top-6 right-6 lg:top-8 lg:right-8 z-50 flex items-center gap-4"
+            className="fixed top-6 right-4 lg:top-8 lg:right-8 z-50 flex items-start gap-3"
           >
             {activeSectionId > 0 && activeSectionId <= 6 && (
+              <div className="flex flex-col items-center gap-1">
+                <button 
+                  onClick={() => setIsUiVisible(p => !p)}
+                  className="relative p-2 rounded-full backdrop-blur-md bg-[#050B14]/60 border border-white/20 text-white hover:text-accent hover:bg-[#050B14]/80 hover:scale-105 transition-all shadow-xl group cursor-pointer overflow-hidden flex items-center justify-center w-9 h-9 lg:w-12 lg:h-12"
+                  aria-label={isUiVisible ? 'Ocultar interfaz' : 'Mostrar interfaz'}
+                >
+                  <AlignLeft size={16} className={`transition-all duration-300 ${isUiVisible ? 'opacity-90 group-hover:opacity-100' : 'opacity-40'}`} />
+                  {!isUiVisible && (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="w-5 h-[1.5px] bg-red-500/80 rotate-45"></div>
+                    </div>
+                  )}
+                </button>
+                <span className="text-[9px] uppercase font-sans tracking-widest text-white/70 font-bold drop-shadow-md">Texto</span>
+              </div>
+            )}
+            <div className="flex flex-col items-center gap-1">
               <button 
-                onClick={() => setIsUiVisible(p => !p)}
-                className="relative p-3 lg:p-4 rounded-full backdrop-blur-md bg-[#050B14]/60 border border-white/20 text-white hover:text-accent hover:bg-[#050B14]/80 hover:scale-105 transition-all shadow-xl group cursor-pointer overflow-hidden flex items-center justify-center w-12 h-12 lg:w-14 lg:h-14"
-                aria-label={isUiVisible ? 'Ocultar interfaz' : 'Mostrar interfaz'}
+                onClick={toggleGlobalAudio}
+                className="p-2 rounded-full backdrop-blur-md bg-[#050B14]/60 border border-white/20 text-white hover:text-accent hover:bg-[#050B14]/80 hover:scale-105 transition-all shadow-xl group cursor-pointer w-9 h-9 lg:w-12 lg:h-12 flex items-center justify-center"
+                aria-label={isAudioEnabled ? 'Pausar audio' : 'Activar audio'}
               >
-                <AlignLeft size={22} className={`transition-all duration-300 ${isUiVisible ? 'opacity-90 group-hover:opacity-100' : 'opacity-40'}`} />
-                {!isUiVisible && (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-8 h-[2px] bg-red-500/80 rotate-45"></div>
-                  </div>
+                {isAudioEnabled ? (
+                  <Volume2 size={16} className="opacity-80 group-hover:opacity-100" />
+                ) : (
+                  <VolumeX size={16} className="opacity-60 group-hover:opacity-100 group-hover:text-amber-500" />
                 )}
               </button>
-            )}
-            <button 
-              onClick={toggleGlobalAudio}
-              className="p-3 lg:p-4 rounded-full backdrop-blur-md bg-[#050B14]/60 border border-white/20 text-white hover:text-accent hover:bg-[#050B14]/80 hover:scale-105 transition-all shadow-xl group cursor-pointer w-12 h-12 lg:w-14 lg:h-14 flex items-center justify-center"
-              aria-label={isAudioEnabled ? 'Pausar audio' : 'Activar audio'}
-            >
-              {isAudioEnabled ? (
-                <Volume2 size={22} className="opacity-80 group-hover:opacity-100" />
-              ) : (
-                <VolumeX size={22} className="opacity-60 group-hover:opacity-100 group-hover:text-amber-500" />
-              )}
-            </button>
-            </motion.div>
-          )}
+            </div>
+          </motion.div>
+        )}
           
           {appStage === 'EXPERIENCE' && activeSectionId > 0 && activeSectionId <= 6 && (
             <motion.div
@@ -712,11 +717,11 @@ const Section = React.memo(({ section, index, activeSectionId, onSectionEnter, a
 
         {/* Hotspots integrados en la capa móvil para que acompañen al arrastre */}
         {section.hotspots && section.hotspots.length > 0 && (
-          <div className="absolute inset-0 z-30 pointer-events-none">
+          <div className={`absolute inset-0 z-30 transition-opacity duration-700 pointer-events-none ${isUiVisible ? 'opacity-100' : 'opacity-0'}`}>
             {section.hotspots.map((spot) => (
               <div 
                 key={spot.id}
-                className="absolute pointer-events-auto"
+                className={`absolute ${isUiVisible ? 'pointer-events-auto' : 'pointer-events-none'}`}
                 style={{ top: `${spot.y}%`, left: `${spot.x}%` }}
               >
                 <div 
@@ -740,24 +745,24 @@ const Section = React.memo(({ section, index, activeSectionId, onSectionEnter, a
         
         {/* Controles del mapa (Swipe y Flechas) solo en móvil cuando hay hotspots */}
         {section.hotspots && section.hotspots.length > 0 && (
-          <div className="absolute top-24 md:hidden flex items-center justify-center gap-6 text-white/60 pointer-events-auto z-20 w-full px-4">
+          <div className={`absolute top-24 md:hidden flex items-center justify-center gap-4 text-white/60 z-20 w-full px-4 transition-opacity duration-700 ${isUiVisible ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
             <button 
               onClick={(e) => { e.stopPropagation(); handleScrollMap('left'); }}
-              className="bg-black/40 p-2.5 rounded-full backdrop-blur-md border border-white/20 hover:bg-black/60 transition-colors shadow-lg active:scale-95"
+              className="bg-black/40 p-1.5 rounded-full backdrop-blur-md border border-white/20 hover:bg-black/60 transition-colors shadow-lg active:scale-95"
             >
-              <ChevronLeft size={24} className="text-white" />
+              <ChevronLeft size={18} className="text-white" />
             </button>
 
             <div className="flex flex-col items-center gap-1 animate-pulse pointer-events-none">
-              <Hand width={20} height={20} className="drop-shadow-lg opacity-80 text-white" />
-              <span className="text-[9px] uppercase tracking-[0.2em] font-sans font-bold bg-black/40 px-3 py-1 rounded-full backdrop-blur-sm border border-white/10 text-white/90">Explorar</span>
+              <Hand width={16} height={16} className="drop-shadow-lg opacity-80 text-white" />
+              <span className="text-[8px] uppercase tracking-[0.2em] font-sans font-bold bg-black/40 px-2 py-0.5 rounded-full backdrop-blur-sm border border-white/10 text-white/90">Explorar</span>
             </div>
 
             <button 
               onClick={(e) => { e.stopPropagation(); handleScrollMap('right'); }}
-              className="bg-black/40 p-2.5 rounded-full backdrop-blur-md border border-white/20 hover:bg-black/60 transition-colors shadow-lg active:scale-95"
+              className="bg-black/40 p-1.5 rounded-full backdrop-blur-md border border-white/20 hover:bg-black/60 transition-colors shadow-lg active:scale-95"
             >
-              <ChevronRight size={24} className="text-white" />
+              <ChevronRight size={18} className="text-white" />
             </button>
           </div>
         )}
@@ -920,6 +925,16 @@ const Section = React.memo(({ section, index, activeSectionId, onSectionEnter, a
               ))}
             </motion.p>
           </motion.div>
+        </motion.div>
+        
+        {/* Indicador de scroll global */}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: baseDelay + 1.5, duration: 1 }}
+          className={`absolute bottom-3 md:bottom-2 text-white/30 animate-bounce pointer-events-none transition-opacity duration-700 ${isUiVisible ? 'opacity-100' : 'opacity-0'}`}
+        >
+          <ChevronsDown size={20} />
         </motion.div>
       </div>
     </motion.section>
